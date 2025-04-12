@@ -1,11 +1,11 @@
---Part 1: Creating the database
+-- Part 1: Creating the database
 -- Create Database
 CREATE DATABASE bookstore;
 
 -- Use the database
 USE bookstore;
 
---Part 2: Creating the tables
+-- Part 2: Creating the tables
 
 -- Table: book_language
 CREATE TABLE book_language (
@@ -142,7 +142,7 @@ CREATE TABLE order_history (
     FOREIGN KEY (status_id) REFERENCES order_status(order_status_id)
 );
 
---Part 3: Set-up user groups and roles
+-- Part 3: Set-up user groups and roles
 -- Create database user roles
 CREATE USER 'book_admin'@'localhost' IDENTIFIED BY 'password';
 CREATE USER 'data_analyst'@'localhost' IDENTIFIED BY 'password';
@@ -154,22 +154,22 @@ GRANT SELECT ON bookstore.* TO 'data_analyst'@'localhost';
 -- Apply changes
 FLUSH PRIVILEGES;
 
---Part 4: Test the database with queries
---Retrieve all books
+-- Part 4: Test the database with queries
+-- Retrieve all books
 SELECT * FROM book;
 
---Get authors of a specific group
+-- Get authors of a specific group
 SELECT a.first_name, a.last_name
 FROM book_author ba
 JOIN author a ON ba.author_id = a.author_id
 WHERE ba.book_id = 1;
 
---Get Customer orders
+-- Get Customer orders
 SELECT co.order_id, co.total_price, os.status_name
 FROM cust_order co
 JOIN order_status os ON co.order_status_id = os.order_status_id;
 
---List books in a specific order
+-- List books in a specific order
 SELECT b.title, ol.quantity, ol.price
 FROM order_line ol
 JOIN book b ON ol.book_id = b.book_id
