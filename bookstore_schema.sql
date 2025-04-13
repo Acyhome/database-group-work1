@@ -142,16 +142,37 @@ CREATE TABLE order_history (
     FOREIGN KEY (status_id) REFERENCES order_status(order_status_id)
 );
 
--- Part 3: Set-up user groups and roles
--- Create database user roles
-CREATE USER 'book_admin'@'localhost' IDENTIFIED BY 'password';
-CREATE USER 'data_analyst'@'localhost' IDENTIFIED BY 'password';
+-- Part 3: Setting up User Roles and Privileges
 
--- Assign privileges to roles
-GRANT ALL PRIVILEGES ON bookstore.* TO 'book_admin'@'localhost';
-GRANT SELECT ON bookstore.* TO 'data_analyst'@'localhost';
+-- Create Admin User with full privileges
+CREATE USER 'bookstore_admin'@'localhost' IDENTIFIED BY 'admin_password';
+GRANT ALL PRIVILEGES ON bookstore.* TO 'bookstore_admin'@'localhost';
 
--- Apply changes
+-- Create Staff User with limited privileges
+CREATE USER 'bookstore_staff'@'localhost' IDENTIFIED BY 'staff_password';
+-- Staff can view all tables
+GRANT SELECT ON bookstore.* TO 'bookstore_staff'@'localhost';
+-- Staff can modify inventory and orders
+GRANT INSERT, UPDATE, DELETE ON bookstore.book TO 'bookstore_staff'@'localhost';
+GRANT INSERT, UPDATE, DELETE ON bookstore.cust_order TO 'bookstore_staff'@'localhost';
+GRANT INSERT, UPDATE, DELETE ON bookstore.order_line TO 'bookstore_staff'@'localhost';
+GRANT INSERT, UPDATE, DELETE ON bookstore.order_status TO 'bookstore_staff'@'localhost';
+GRANT INSERT, UPDATE, DELETE ON bookstore.order_history TO 'bookstore_staff'@'localhost';
+
+-- Create Customer Service User with customer data access
+CREATE USER 'customer_service'@'localhost' IDENTIFIED BY 'cs_password';
+-- Customer service can view and update customer information
+GRANT SELECT ON bookstore.* TO 'customer_service'@'localhost';
+GRANT INSERT, UPDATE ON bookstore.customer TO 'customer_service'@'localhost';
+GRANT INSERT, UPDATE ON bookstore.customer_address TO 'customer_service'@'localhost';
+GRANT INSERT, UPDATE ON bookstore.address TO 'customer_service'@'localhost';
+GRANT SELECT, UPDATE ON bookstore.cust_order TO 'customer_service'@'localhost';
+
+-- Create Read-Only User for reports
+CREATE USER 'report_user'@'localhost' IDENTIFIED BY 'report_password';
+GRANT SELECT ON bookstore.* TO 'report_user'@'localhost';
+
+-- Apply the privileges
 FLUSH PRIVILEGES;
 
 -- Part 4: Test the database with queries
